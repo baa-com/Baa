@@ -1,8 +1,8 @@
-import { Box, Container, HStack, Text } from "@chakra-ui/react";
-import heartSVG from "../../public/heart-straight.svg";
-import commentSVG from "../../public/chat-circle.svg";
-import voteSVG from "../../public/chart-donut.svg";
-import bookmarkSVG from "../../public/bookmark-simple.svg";
+import { Container, HStack, Text } from "@chakra-ui/react";
+import heartSVG from "../public/heart-straight.svg";
+import commentSVG from "../public/chat-circle.svg";
+import voteSVG from "../public/chart-donut.svg";
+import bookmarkSVG from "../public/bookmark-simple.svg";
 import Image from "next/image";
 
 export default function Post({ caption }) {
