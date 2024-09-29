@@ -1,4 +1,4 @@
-import { Providers } from "./providers";
+import { Provider } from "@/components/ui/provider";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 
@@ -14,9 +14,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang="en" className={outfit.className}>
+		<html lang="en" className={outfit.className} suppressHydrationWarning>
 			<body>
-				<Providers>{children}</Providers>
+				<Provider>{children}</Provider>
 			</body>
 		</html>
 	);

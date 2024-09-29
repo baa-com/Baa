@@ -17,11 +17,12 @@ const PostSchema = new Schema(
 		author: {
 			type: Schema.Types.ObjectId,
 			ref: "User",
+			required: [true, "Author is required"],
 		},
-		likes: [{ type: Schema.Types.ObjectId, ref: "Person" }],
-		comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
-		firstVotes: [{ type: Schema.Types.ObjectId, ref: "Person" }],
-		secondVotes: [{ type: Schema.Types.ObjectId, ref: "Person" }],
+		likes: [{ type: Schema.Types.ObjectId, ref: "Person", default: [] }],
+		comments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }],
+		firstVotes: [{ type: Schema.Types.ObjectId, ref: "Person", default: [] }],
+		secondVotes: [{ type: Schema.Types.ObjectId, ref: "Person", default: [] }],
 		categories: [{ type: String }],
 	},
 	{

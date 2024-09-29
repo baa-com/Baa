@@ -1,11 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+
+import {
+	FileUploadDropzone,
+	FileUploadList,
+	FileUploadRoot,
+} from "@/components/ui/file-button";
 
 export default function FileUploader() {
 	const [file, setFile] = useState(null);
 	const [uploading, setUploading] = useState(false);
+	const [previewUrl, setPreviewUrl] = useState("");
+
+	useEffect(() => {
+		return () => {
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl);
+			}
+		};
+	}, [previewUrl]);
+
+	const handleFileChange = (e) => {
+		const files = e.target.files;
+		if (files && files[0]) {
+			const selectedFile = files[0];
+			setFile(selectedFile);
+			const objectUrl = URL.createObjectURL(selectedFile);
+			setPreviewUrl(objectUrl);
+		}
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -18,10 +43,9 @@ export default function FileUploader() {
 		setUploading(true);
 
 		try {
-			// Sending the filename and contentType to the backend
 			const response = await axios.post(
 				`${process.env.NEXT_PUBLIC_BASE_URL}/api/upload`,
-				{ filename: file.name, contentType: file.type }, // No need to use JSON.stringify
+				{ filename: file.name, contentType: file.type },
 				{
 					headers: {
 						"Content-Type": "application/json",
@@ -30,7 +54,7 @@ export default function FileUploader() {
 			);
 
 			if (response.status === 200) {
-				const { url, fields } = response.data; // response.json is not required in axios
+				const { url, fields } = response.data;
 
 				const formData = new FormData();
 				Object.entries(fields).forEach(([key, value]) => {
@@ -38,12 +62,9 @@ export default function FileUploader() {
 				});
 				formData.append("file", file);
 
-				const uploadResponse = await fetch(url, {
-					method: "POST",
-					body: formData,
-				});
+				const uploadResponse = await axios.post(url, formData);
 
-				if (uploadResponse.ok) {
+				if (uploadResponse.status >= 200 && uploadResponse.status < 300) {
 					alert("Upload successful!");
 				} else {
 					console.error("S3 Upload Error:", uploadResponse);
@@ -67,18 +88,23 @@ export default function FileUploader() {
 				<input
 					id="file"
 					type="file"
-					onChange={(e) => {
-						const files = e.target.files;
-						if (files) {
-							setFile(files[0]);
-						}
-					}}
+					onChange={handleFileChange}
 					accept="image/png, image/jpeg"
 				/>
 				<button type="submit" disabled={uploading}>
 					Upload
 				</button>
 			</form>
+			{previewUrl && (
+				<div>
+					<h2>Image Preview:</h2>
+					<img
+						src={previewUrl}
+						alt="File Preview"
+						style={{ maxWidth: "100%", height: "auto" }}
+					/>
+				</div>
+			)}
 		</main>
 	);
 }
