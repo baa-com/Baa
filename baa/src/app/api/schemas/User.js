@@ -22,7 +22,7 @@ const UserSchema = new Schema(
 		username: {
 			type: String,
 			unique: true,
-			required: [true, "Password is required"],
+			required: [true, "Username is required"],
 		},
 		password: {
 			type: String,
@@ -34,12 +34,13 @@ const UserSchema = new Schema(
 		},
 		bio: {
 			type: String,
+			default: "",
 		},
-		followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
-		following: [{ type: Schema.Types.ObjectId, ref: "User" }],
-		posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-		likes: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-		votes: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+		followers: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+		following: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
+		posts: [{ type: Schema.Types.ObjectId, ref: "Post", default: [] }],
+		likes: [{ type: Schema.Types.ObjectId, ref: "Post", default: [] }],
+		votes: [{ type: Schema.Types.ObjectId, ref: "Post", default: [] }],
 	},
 	{
 		timestamps: true,
