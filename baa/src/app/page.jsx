@@ -19,6 +19,8 @@ export default function Home() {
 					Peek
 				</Button>
 				<Button
+					as={Link}
+					href="/signup"
 					bg="#40396E"
 					color="white"
 					borderRadius="full"

@@ -17,7 +17,6 @@ export default function Central() {
 		<Box
 			width={{ base: "100%", md: "60%" }}
 			height="100vh"
-			overflowY="auto"
 			p={5}
 			bg="white"
 			borderRight="1px solid #E2E8F0"
@@ -48,7 +47,7 @@ export default function Central() {
 				</Tabs.List>
 			</Tabs.Root>
 
-			<VStack spacing={8} align="stretch">
+			<VStack spacing={8} align="stretch" overflowY="auto">
 				{[1, 2, 3].map((index) => (
 					<Box
 						key={index}
