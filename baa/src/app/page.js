@@ -1,95 +1,43 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
+import Image from 'next/image';
+import sheepImage from './sheep.png'; 
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <Box height="100vh" bg="#E0EFFF" p={8}>
+      <Flex justifyContent="flex-end" gap={10}>
+      <Button as={Link} href="/home" variant="link" color="#40396E" fontSize="lg">
+        Peek
+      </Button>
+      <Button bg="#40396E" color="white" borderRadius="full" fontSize="lg" width="auto" height="60px"  px={8} _hover={{ bg: "#2F2A55" }}>
+        Join
+      </Button>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+      </Flex>
+
+      <Flex height="calc(100vh - 80px)" alignItems="center" justifyContent="space-between">
+        <Box>
+          <Heading as="h1" size="4xl" mb={4} color="#40396E">
+            Baa
+          </Heading>
+          <Text fontSize="4xl" color="#9BA7C5" fontWeight="bold">
+            Join our flock
+          </Text>
+        </Box>
+
+        <Box>
           <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            src={sheepImage}
+            alt="Sheep illustration"
+            width={500}
+            height={500}
+            style={{ filter: 'drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2))' }}
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </Box>
+      </Flex>
+    </Box>
   );
 }
