@@ -1,5 +1,5 @@
-import { connectDB } from "../../lib/mongodb";
-import { getAllPosts, createPost } from "../models/postModel";
+import { connectDB } from "../../../lib/mongodb";
+import { getAllPosts, createPost } from "../../../models/post";
 
 export async function GET(request) {
 	try {

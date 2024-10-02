@@ -21,7 +21,16 @@ const nextConfig = {
 		];
 	},
 	images: {
-		domains: ["placehold.co", "via.placeholder.com"], // Add the domain you're using for images
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "**.co",
+			},
+			{
+				protocol: "https",
+				hostname: "**.com",
+			},
+		],
 	},
 };
 

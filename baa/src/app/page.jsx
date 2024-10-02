@@ -1,13 +1,12 @@
 "use client";
 
-import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
-import Image from "next/image";
-import sheepImage from "./public/sheep.png";
+import NextImage from "next/image";
 import Link from "next/link";
+import { Box, Button, Flex, Heading, Text, Image } from "@chakra-ui/react";
 
-export default function Home() {
+export default function Landing() {
 	return (
-		<Box height="100vh" bg="#E0EFFF" p={8}>
+		<Box height="dvh" bg="#E0EFFF" p={8}>
 			<Flex justifyContent="flex-end" gap={10}>
 				<Button
 					as={Link}
@@ -49,13 +48,15 @@ export default function Home() {
 				</Box>
 
 				<Box>
-					<Image
-						src={sheepImage}
-						alt="Sheep illustration"
-						width={500}
-						height={500}
-						style={{ filter: "drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2))" }}
-					/>
+					<Image asChild>
+						<NextImage
+							src={"/sheep.png"}
+							alt="Sheep illustration"
+							width={500}
+							height={500}
+							style={{ filter: "drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2))" }}
+						/>
+					</Image>
 				</Box>
 			</Flex>
 		</Box>

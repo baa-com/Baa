@@ -14,8 +14,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang="en" className={outfit.className} suppressHydrationWarning>
-			<body>
+		<html lang="en" suppressHydrationWarning>
+			<body className={outfit.className}>
 				<Provider>{children}</Provider>
 			</body>
 		</html>
