@@ -12,22 +12,20 @@ export async function getUserByUsername(username) {
 }
 
 export async function createUser(
-	firstName,
-	lastName,
+	fullName,
 	email,
 	phoneNumber,
 	username,
 	password,
-	birthDate
+	birthday
 ) {
 	await connectDB();
 	return await User.create({
-		firstName,
-		lastName,
+		fullName,
 		email,
 		phoneNumber,
 		username,
 		password,
-		birthDate,
+		birthday,
 	});
 }

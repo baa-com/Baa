@@ -51,7 +51,8 @@ export default function Login() {
 				)
 				.catch((error) => {
 					console.error("Error during login:", error);
-					return error.message;
+					const errorMessage = error?.response?.data?.error;
+					throw new Error(errorMessage);
 				})
 				.then((response) => {
 					router.push("/home");
@@ -73,7 +74,7 @@ export default function Login() {
 							<Heading alignSelf="center" fontWeight="bold" size="5xl">
 								Log In
 							</Heading>
-							<Text alignSelf="center" fontSize="xl">
+							<Text fontSize="xl" alignSelf="center" textAlign="center" mb="4">
 								Welcome back! Please enter your credentials.
 							</Text>
 							<Field
@@ -86,7 +87,7 @@ export default function Login() {
 								<Input
 									p="25px"
 									fontSize="xl"
-									borderRadius="50px"
+									borderRadius="10px"
 									borderColor="black"
 									_dark={{ borderColor: "white" }}
 									placeholder="Enter your username"
@@ -107,14 +108,14 @@ export default function Login() {
 								<PasswordInput
 									p="25px"
 									fontSize="xl"
-									borderRadius="50px"
+									borderRadius="10px"
 									borderColor="black"
 									_dark={{ borderColor: "white" }}
 									placeholder="Enter your password"
 									_placeholder={{ color: "#BBBBBB" }}
 									visibilityIcon={{
-										off: <VisibleIcon boxSize="32px" color="black" />,
-										on: <HiddenIcon boxSize="32px" color="black" />,
+										off: <VisibleIcon boxSize="24px" color="black" />,
+										on: <HiddenIcon boxSize="24px" color="black" />,
 									}}
 									{...register("password", {
 										required: "Password is required",
@@ -125,11 +126,10 @@ export default function Login() {
 								type="submit"
 								w="full"
 								p="25px"
-								mt="8"
 								fontSize="xl"
-								borderRadius="50px"
-								bg="#40396E"
-								_dark={{ bg: "#958EC4" }}
+								borderRadius="10px"
+								bg="#4080FF"
+								color="white"
 							>
 								Log In
 							</Button>

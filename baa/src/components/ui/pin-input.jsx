@@ -16,6 +16,7 @@ export const PinInput = forwardRef(function PinInput(props, ref) {
 							borderColor={props.borderColor}
 							boxSize="50px"
 							fontSize={props.fontSize}
+							_dark={{ borderColor: props._dark.borderColor }}
 						/>
 					))}
 				</Group>

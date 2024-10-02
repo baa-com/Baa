@@ -24,7 +24,7 @@ export const InputGroup = forwardRef(function InputGroup(props, ref) {
 				...children.props,
 			})}
 			{endElement && (
-				<InputElement placement="end" pr="25px" {...endElementProps}>
+				<InputElement placement="end" pr="1rem" {...endElementProps}>
 					{endElement}
 				</InputElement>
 			)}

@@ -2,13 +2,9 @@ import mongoose, { Schema, model } from "mongoose";
 
 const UserSchema = new Schema(
 	{
-		firstName: {
+		fullName: {
 			type: String,
-			required: [true, "First name is required"],
-		},
-		lastName: {
-			type: String,
-			required: [true, "Last name is required"],
+			required: [true, "Full name is required"],
 		},
 		email: {
 			type: String,
@@ -18,7 +14,6 @@ const UserSchema = new Schema(
 			type: String,
 			default: "",
 		},
-		verified: { type: Boolean, default: false },
 		username: {
 			type: String,
 			unique: true,
@@ -28,14 +23,16 @@ const UserSchema = new Schema(
 			type: String,
 			required: [true, "Password is required"],
 		},
-		birthDate: {
+		birthday: {
 			type: Date,
-			required: [true, "Birth date is required"],
+			required: [true, "Birthday is required"],
 		},
 		bio: {
 			type: String,
 			default: "",
 		},
+		verified: { type: Boolean, default: true },
+		banned: { type: Boolean, default: false },
 		followers: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
 		following: [{ type: Schema.Types.ObjectId, ref: "User", default: [] }],
 		posts: [{ type: Schema.Types.ObjectId, ref: "Post", default: [] }],
