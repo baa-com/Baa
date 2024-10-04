@@ -10,10 +10,12 @@ export const Field = forwardRef(function Field(props, ref) {
 					{label} {asterisk && <ChakraField.RequiredIndicator />}
 				</ChakraField.Label>
 			)}
-			{children}
 			{helperText && (
-				<ChakraField.HelperText>{helperText}</ChakraField.HelperText>
+				<ChakraField.HelperText alignSelf="start" fontSize="md">
+					{helperText}
+				</ChakraField.HelperText>
 			)}
+			{children}
 			{errorText && (
 				<ChakraField.ErrorText fontSize="md">{errorText}</ChakraField.ErrorText>
 			)}

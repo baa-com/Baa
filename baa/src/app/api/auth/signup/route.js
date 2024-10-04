@@ -4,17 +4,18 @@ import bcrypt from "bcryptjs";
 
 export async function POST(request) {
 	try {
-		const { fullName, email, phoneNumber, username, password, birthday } =
+		const { name, email, phone, username, password, birthday, method } =
 			await request.json();
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const birthDate = new Date(birthday);
 		const user = await createUser(
-			fullName,
+			name,
 			email,
-			phoneNumber,
+			phone,
 			username,
 			hashedPassword,
-			birthDate
+			birthDate,
+			method?.toLowerCase()
 		);
 		await createSession(user._id);
 		return new Response(JSON.stringify({ success: true }), {

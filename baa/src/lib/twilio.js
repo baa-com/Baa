@@ -4,11 +4,11 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
-export async function createEmailVerification(recipient) {
+export async function createVerification(channel, recipient) {
 	const verification = await client.verify.v2
 		.services("VAc5c419904492b765439bd239d7e05b5f")
 		.verifications.create({
-			channel: "email",
+			channel: channel,
 			channelConfiguration: {
 				substitutions: {
 					time:
@@ -20,10 +20,10 @@ export async function createEmailVerification(recipient) {
 			to: recipient,
 		});
 
-	console.log(verification);
+	return verification;
 }
 
-export async function createEmailVerificationCheck(code, recipient) {
+export async function createVerificationCheck(code, recipient) {
 	const verificationCheck = await client.verify.v2
 		.services("VAc5c419904492b765439bd239d7e05b5f")
 		.verificationChecks.create({
@@ -31,6 +31,5 @@ export async function createEmailVerificationCheck(code, recipient) {
 			to: recipient,
 		});
 
-	console.log(verificationCheck);
 	return verificationCheck;
 }

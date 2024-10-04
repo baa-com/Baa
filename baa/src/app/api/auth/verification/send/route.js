@@ -1,9 +1,9 @@
-import { createEmailVerification } from "../../../../../lib/twilio";
+import { createVerification } from "../../../../../lib/twilio";
 
 export async function POST(request) {
 	try {
-		const { recipient } = await request.json();
-		await createEmailVerification(recipient);
+		const { channel, recipient } = await request.json();
+		await createVerification(channel, recipient);
 		return new Response(JSON.stringify({ success: true }), {
 			status: 200,
 		});

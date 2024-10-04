@@ -1,31 +1,31 @@
 "use client";
 
 import {
-	Container,
 	HStack,
 	Button,
 	Box,
 	Input,
 	Stack,
 	Heading,
-	Show,
 	Center,
 	Image,
 	Text,
 	Link,
-	VStack,
-	Highlight,
+	List,
+	Separator,
+	Collapsible,
 } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
+import { StepsContent, StepsRoot } from "@/components/ui/steps";
 import {
-	StepsContent,
-	StepsItem,
-	StepsList,
-	StepsRoot,
-} from "@/components/ui/steps";
+	MenuContent,
+	MenuItem,
+	MenuRoot,
+	MenuTrigger,
+} from "@/components/ui/menu";
 import { PinInput } from "@/components/ui/pin-input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import NextImage from "next/image";
@@ -36,14 +36,104 @@ import NextLink from "next/link";
 import toast, { Toaster, LoaderIcon } from "react-hot-toast";
 import SuccessIcon from "../../components/icons/success";
 import ErrorIcon from "../../components/icons/error";
-import HappyMaskIcon from "../../components/icons/happy-mask";
+import {
+	CaretDown,
+	CaretUp,
+	CheckCircle,
+	XCircle,
+} from "@phosphor-icons/react";
+import { LuCircleDashed } from "react-icons/lu";
+import GoogleLogo from "@/components/icons/google-logo";
+import AppleLogo from "@/components/icons/apple-logo";
 
-function BirthdayStep({ setStep, setBirthday }) {
+function JoinStep({ setStep }) {
+	return (
+		<Stack gap="4">
+			<Heading alignSelf="center" fontWeight="bold" size="5xl" mb="4">
+				Join Baa
+			</Heading>
+			<Button
+				w="full"
+				p="25px"
+				fontSize="xl"
+				borderWidth="2px"
+				borderRadius="10px"
+				bg="white"
+				color="black"
+				fontWeight="semibold"
+				cursor="pointer"
+				onClick={() => {}}
+			>
+				<GoogleLogo /> Sign up with Google
+			</Button>
+			<Button
+				w="full"
+				p="25px"
+				fontSize="xl"
+				borderWidth="2px"
+				borderRadius="10px"
+				bg="white"
+				color="black"
+				fontWeight="semibold"
+				cursor="pointer"
+				onClick={() => {}}
+			>
+				<AppleLogo /> Sign up with Apple
+			</Button>
+			<HStack>
+				<Separator />
+				<Text flexShrink="0" fontSize="xl">
+					or
+				</Text>
+				<Separator />
+			</HStack>
+			<Button
+				w="full"
+				p="25px"
+				fontSize="xl"
+				borderRadius="10px"
+				bg="#4080FF"
+				color="white"
+				fontWeight="semibold"
+				cursor="pointer"
+				onClick={() => {
+					setStep(1);
+				}}
+			>
+				Create account
+			</Button>
+			<Text alignSelf="center" fontSize="xl">
+				Already have an account?{" "}
+				<Link
+					asChild
+					fontWeight="medium"
+					color="#4080FF"
+					_hover={{ textDecor: "underline" }}
+				>
+					<NextLink href="/login">Log in</NextLink>
+				</Link>
+			</Text>
+		</Stack>
+	);
+}
+
+function InfoStep({
+	method,
+	setStep,
+	setName,
+	setMethod,
+	setEmail,
+	setPhone,
+	setBirthday,
+}) {
 	const {
+		resetField,
 		register,
 		handleSubmit,
-		formState: { errors },
-	} = useForm();
+		formState: { errors, isValid },
+	} = useForm({
+		mode: "onChange",
+	});
 
 	const calculateAge = (birthday) => {
 		const today = new Date();
@@ -61,83 +151,26 @@ function BirthdayStep({ setStep, setBirthday }) {
 	};
 
 	const onSubmit = handleSubmit((data) => {
-		const { birthday } = data;
+		const { name, contact, birthday } = data;
+		setName(name);
 		setBirthday(birthday);
-		setStep(1);
-	});
+		let recipient = contact;
+		if (contact.includes("@")) {
+			setEmail(contact);
+		} else if (contact.replace(" ", "").length === 10) {
+			recipient = `+1${contact}`;
+			setPhone(recipient);
+		} else {
+			setPhone(contact);
+		}
 
-	return (
-		<form onSubmit={onSubmit}>
-			<Stack gap="4">
-				<Heading alignSelf="center" fontWeight="bold" size="5xl" mb="4">
-					Create your account
-				</Heading>
-				<Field
-					w="full"
-					fontSize="xl"
-					label="Birthday"
-					invalid={!!errors.birthday}
-					errorText={errors.birthday?.message}
-				>
-					<Input
-						p="25px"
-						borderRadius="10px"
-						borderColor="black"
-						fontSize="xl"
-						_dark={{ borderColor: "white" }}
-						css={{
-							"&::-webkit-calendar-picker-indicator": {
-								display: "none",
-							},
-						}}
-						type="date"
-						autoComplete="off"
-						{...register("birthday", {
-							required: "Birthday is required",
-							validate: (value) =>
-								calculateAge(value) >= 14 ||
-								"You must be at least 14 years old to register.",
-						})}
-					/>
-				</Field>
-				<Button
-					type="submit"
-					w="full"
-					p="25px"
-					fontSize="xl"
-					borderRadius="10px"
-					bg="#4080FF"
-					color="white"
-				>
-					Continue
-				</Button>
-				<Text alignSelf="center" fontSize="xl">
-					Already have an account?{" "}
-					<Link asChild fontWeight="semibold">
-						<NextLink href="/login">Log in</NextLink>
-					</Link>
-				</Text>
-			</Stack>
-		</form>
-	);
-}
-
-function EmailStep({ setStep, setEmail }) {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm();
-
-	const onSubmit = handleSubmit((data) => {
-		const { email } = data;
-		setEmail(email);
 		toast.promise(
 			axios
 				.post(
 					`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verification/send`,
 					{
-						recipient: email,
+						channel: method === "Email" ? "email" : "sms",
+						recipient,
 					},
 					{
 						headers: {
@@ -152,6 +185,7 @@ function EmailStep({ setStep, setEmail }) {
 				})
 				.then((response) => {
 					setStep(2);
+					resetField("contact");
 				}),
 			{
 				loading: "Sending code... Please wait.",
@@ -165,30 +199,95 @@ function EmailStep({ setStep, setEmail }) {
 		<form onSubmit={onSubmit}>
 			<Stack gap="4">
 				<Heading alignSelf="center" fontWeight="bold" size="5xl" mb="4">
-					Create your account
+					Tell us about yourself
 				</Heading>
 				<Field
 					w="full"
 					fontSize="xl"
-					label="Email"
-					invalid={!!errors.email}
-					errorText={errors.email?.message}
+					invalid={!!errors.name}
+					errorText={errors.name?.message}
 				>
 					<Input
 						p="25px"
 						fontSize="xl"
+						borderWidth="2px"
 						borderRadius="10px"
-						borderColor="black"
-						_dark={{ borderColor: "white" }}
-						placeholder="Email"
-						_placeholder={{ color: "#BBBBBB" }}
+						placeholder="Name"
+						_placeholder={{ color: "black" }}
+						_dark={{ _placeholder: { color: "white" } }}
 						autoComplete="off"
-						{...register("email", {
-							required: "Email is required",
+						{...register("name", {
+							required: "What's your name?",
+						})}
+					/>
+				</Field>
+				<Field
+					w="full"
+					fontSize="xl"
+					invalid={!!errors.contact}
+					errorText={errors.contact?.message}
+				>
+					<Input
+						p="25px"
+						fontSize="xl"
+						borderWidth="2px"
+						borderRadius="10px"
+						placeholder={method}
+						_placeholder={{ color: "black" }}
+						_dark={{ _placeholder: { color: "white" } }}
+						autoComplete="off"
+						{...register("contact", {
+							required: true,
 							pattern: {
-								value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-								message: "Please enter a valid email",
+								value:
+									method === "Email"
+										? /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+										: /^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
+								message: `Please enter a valid ${method.toLowerCase()}`,
 							},
+						})}
+					/>
+				</Field>
+				<Text
+					maxW="fit-content"
+					alignSelf="end"
+					fontSize="lg"
+					fontWeight="medium"
+					color="#4080FF"
+					cursor="pointer"
+					_hover={{ textDecor: "underline" }}
+					onClick={() => {
+						setMethod(method === "Email" ? "Phone" : "Email");
+						resetField("contact");
+					}}
+				>
+					Use {method === "Email" ? "phone" : "email"} instead
+				</Text>
+				<Field
+					w="full"
+					fontSize="xl"
+					label="Birthday"
+					helperText="This will not be shown publicly"
+					invalid={!!errors.birthday}
+					errorText={errors.birthday?.message}
+				>
+					<Input
+						p="25px"
+						borderWidth="2px"
+						borderRadius="10px"
+						fontSize="xl"
+						css={{
+							"&::-webkit-calendar-picker-indicator": {
+								display: "none",
+							},
+						}}
+						type="date"
+						autoComplete="off"
+						{...register("birthday", {
+							required: "What's your birthday?",
+							validate: (value) =>
+								calculateAge(value) >= 14 ||
+								"You must be at least 14 years old to register",
 						})}
 					/>
 				</Field>
@@ -200,25 +299,30 @@ function EmailStep({ setStep, setEmail }) {
 					borderRadius="10px"
 					bg="#4080FF"
 					color="white"
+					fontWeight="semibold"
+					cursor="pointer"
+					disabled={!isValid}
+					_disabled={{ cursor: "not-allowed" }}
 				>
 					Continue
 				</Button>
-				<Text alignSelf="center" fontSize="xl">
-					Already have an account?{" "}
-					<Link asChild fontWeight="semibold">
-						<NextLink href="/login">Log in</NextLink>
-					</Link>
-				</Text>
 			</Stack>
 		</form>
 	);
 }
 
-function VerificationStep({ email, setStep }) {
+function VerificationStep({
+	contact,
+	method,
+	setStep,
+	setMethod,
+	setEmail,
+	setPhone,
+}) {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { isValid },
 	} = useForm();
 
 	const resendCode = () => {
@@ -227,7 +331,8 @@ function VerificationStep({ email, setStep }) {
 				.post(
 					`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verification/send`,
 					{
-						recipient: email,
+						channel: method === "Email" ? "email" : "sms",
+						recipient: contact,
 					},
 					{
 						headers: {
@@ -258,7 +363,7 @@ function VerificationStep({ email, setStep }) {
 					`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verification/check`,
 					{
 						code: code,
-						recipient: email,
+						recipient: contact,
 					},
 					{
 						headers: {
@@ -284,7 +389,9 @@ function VerificationStep({ email, setStep }) {
 					setStep(3);
 				}),
 			{
-				loading: "Verifying your email... Please wait.",
+				loading: `Verifying ${
+					contact?.includes("@") ? "email" : "phone"
+				}... Please wait.`,
 				success: "Verification successful!",
 				error: (e) => e.message,
 			}
@@ -293,39 +400,67 @@ function VerificationStep({ email, setStep }) {
 
 	return (
 		<form onSubmit={onSubmit}>
-			<Heading fontWeight="bold" size="5xl">
-				Verify your email
-			</Heading>
-			<Stack gap="4" maxWidth="min-content">
-				<Text fontSize="xl" alignSelf="center" textAlign="center" mb="4">
-					You're almost there! We sent a code to{" "}
-					<Text as="span" fontWeight="bold">
-						{email}
-					</Text>
-					. Enter it below.
+			<Stack gap="4">
+				<Heading alignSelf="center" fontWeight="bold" size="5xl" mb="4">
+					We sent you a code
+				</Heading>
+				<Text maxW="fit-content" fontSize="lg" fontWeight="medium">
+					Enter it below to verify {contact}
 				</Text>
-				<Field
-					w="full"
-					fontSize="xl"
-					invalid={!!errors.code}
-					errorText={errors.code?.message}
-				>
+				<Field w="full" fontSize="xl">
 					<PinInput
+						otp
 						alignSelf="center"
 						placeholder=""
 						borderRadius="10px"
-						borderColor="black"
 						fontSize="xl"
-						_dark={{ borderColor: "white" }}
 						{...register("code", {
-							required: "Verification code is required",
+							required: true,
 							minLength: {
 								value: 6,
-								message: "6-digit verification code is required",
 							},
 						})}
 					/>
 				</Field>
+				<MenuRoot variant="subtle">
+					<MenuTrigger maxW="fit-content" alignSelf="end">
+						<Text
+							fontSize="lg"
+							fontWeight="medium"
+							color="#4080FF"
+							cursor="pointer"
+							_hover={{ textDecor: "underline" }}
+						>
+							Didn't receive code?
+						</Text>
+					</MenuTrigger>
+					<MenuContent p="2" w="155px">
+						<MenuItem value="resend-code" p="2" onClick={resendCode}>
+							Resend code
+						</MenuItem>
+						<MenuItem
+							value="change"
+							p="2"
+							onClick={() => {
+								setStep(0);
+							}}
+						>
+							Change {contact?.includes("@") ? "email" : "phone"}
+						</MenuItem>
+						<MenuItem
+							value="use-other"
+							p="2"
+							onClick={() => {
+								setMethod(method === "Email" ? "Phone" : "Email");
+								setStep(0);
+								setEmail("");
+								setPhone("");
+							}}
+						>
+							Use {contact?.includes("@") ? "phone" : "email"} instead
+						</MenuItem>
+					</MenuContent>
+				</MenuRoot>
 				<Button
 					type="submit"
 					w="full"
@@ -334,57 +469,58 @@ function VerificationStep({ email, setStep }) {
 					borderRadius="10px"
 					bg="#4080FF"
 					color="white"
+					fontWeight="semibold"
+					cursor="pointer"
+					disabled={!isValid}
+					_disabled={{ cursor: "not-allowed" }}
 				>
-					Verify
+					Continue
 				</Button>
-				<HStack justify="space-around">
-					<Text
-						alignSelf="center"
-						fontSize="xl"
-						fontWeight="semibold"
-						cursor="pointer"
-						onClick={() => {
-							setStep(1);
-						}}
-					>
-						Change email
-					</Text>
-					<Text
-						alignSelf="center"
-						fontSize="xl"
-						fontWeight="semibold"
-						cursor="pointer"
-						onClick={resendCode}
-					>
-						Resend code
-					</Text>
-				</HStack>
 			</Stack>
 		</form>
 	);
 }
 
-function RegistrationStep({ birthday, email, phoneNumber }) {
+function RegistrationStep({ name, method, email, phone, birthday }) {
+	const [open, setOpen] = useState(false);
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
-	} = useForm();
+		watch,
+		formState: { errors, isValid },
+	} = useForm({
+		mode: "onChange",
+	});
+	const value = watch("password", "");
 	const router = useRouter();
 
+	const checkUsername = (username) => {
+		return /^[a-zA-Z0-9_]+$/.test(username);
+	};
+
+	const checkPassword = (password) => {
+		return (
+			!/^[^0-9]*$/.test(password) &&
+			!/^[^a-z]*$/.test(password) &&
+			!/^[^A-Z]*$/.test(password) &&
+			!/^[a-zA-Z0-9]*$/.test(password)
+		);
+	};
+
 	const onSubmit = handleSubmit((data) => {
-		const { fullName, username, password } = data;
+		const { username, password } = data;
 		toast.promise(
 			axios
 				.post(
 					`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/signup`,
 					{
-						fullName,
+						name,
 						email,
-						phoneNumber,
+						phone,
 						username,
 						password,
 						birthday,
+						method,
 					},
 					{
 						headers: {
@@ -424,69 +560,141 @@ function RegistrationStep({ birthday, email, phoneNumber }) {
 				<Field
 					w="full"
 					fontSize="xl"
-					label="Full Name"
-					invalid={!!errors.fullName}
-					errorText={errors.fullName?.message}
-				>
-					<Input
-						p="25px"
-						fontSize="xl"
-						borderRadius="10px"
-						borderColor="black"
-						_dark={{ borderColor: "white" }}
-						placeholder="Enter your full name"
-						_placeholder={{ color: "#BBBBBB" }}
-						autoComplete="off"
-						{...register("fullName", {
-							required: "Full name is required",
-						})}
-					/>
-				</Field>
-				<Field
-					w="full"
-					fontSize="xl"
-					label="Username"
 					invalid={!!errors.username}
 					errorText={errors.username?.message}
 				>
 					<Input
 						p="25px"
 						fontSize="xl"
+						borderWidth="2px"
 						borderRadius="10px"
-						borderColor="black"
-						_dark={{ borderColor: "white" }}
-						placeholder="Enter your username"
-						_placeholder={{ color: "#BBBBBB" }}
+						placeholder="Username"
+						_placeholder={{ color: "black" }}
+						_dark={{ _placeholder: { color: "white" } }}
 						autoComplete="off"
 						{...register("username", {
-							required: "Username is required",
+							required: "Please choose a username",
+							maxLength: {
+								value: 14,
+								message: "Your username must be shorter than 15 characters",
+							},
+							validate: (x) =>
+								checkUsername(x) ||
+								"Your username can only contain letters, numbers and '_'",
 						})}
 					/>
 				</Field>
 				<Field
 					w="full"
 					fontSize="xl"
-					label="Password"
 					invalid={!!errors.password}
 					errorText={errors.password?.message}
 				>
 					<PasswordInput
 						p="25px"
 						fontSize="xl"
+						borderWidth="2px"
 						borderRadius="10px"
-						borderColor="black"
-						_dark={{ borderColor: "white" }}
-						placeholder="Enter your password"
-						_placeholder={{ color: "#BBBBBB" }}
+						placeholder="Password"
+						_placeholder={{ color: "black" }}
+						_dark={{ _placeholder: { color: "white" } }}
 						visibilityIcon={{
-							off: <VisibleIcon boxSize="24px" color="black" />,
-							on: <HiddenIcon boxSize="24px" color="black" />,
+							off: <VisibleIcon boxSize="24px" />,
+							on: <HiddenIcon boxSize="24px" />,
 						}}
 						{...register("password", {
-							required: "Password is required",
+							required: "Make sure your password meets all requirements",
+							minLength: {
+								value: 8,
+								message: "Make sure your password meets all requirements",
+							},
+							validate: (x) =>
+								checkPassword(x) ||
+								"Make sure your password meets all requirements",
 						})}
 					/>
 				</Field>
+				<Collapsible.Root
+					onOpenChange={() => {
+						setOpen(true);
+					}}
+					onExitComplete={() => {
+						setOpen(false);
+					}}
+				>
+					<Collapsible.Trigger>
+						<HStack align="start">
+							<Text maxW="fit-content" fontSize="md" fontWeight="medium" mb="4">
+								Password requirements
+							</Text>
+							{open ? <CaretUp size={24} /> : <CaretDown size={24} />}
+						</HStack>
+					</Collapsible.Trigger>
+					<Collapsible.Content>
+						<List.Root gap="2" variant="plain" align="center">
+							<List.Item>
+								<HStack>
+									<List.Indicator>
+										{/^.{0,7}$/.test(value) ? (
+											<XCircle color="#F87171" weight="regular" size={24} />
+										) : (
+											<CheckCircle color="#73F871" weight="regular" size={24} />
+										)}
+									</List.Indicator>
+									<Text>At least 8 characters</Text>
+								</HStack>
+							</List.Item>
+							<List.Item>
+								<HStack>
+									<List.Indicator>
+										{/^[^0-9]*$/.test(value) ? (
+											<XCircle color="#F87171" weight="regular" size={24} />
+										) : (
+											<CheckCircle color="#73F871" weight="regular" size={24} />
+										)}
+									</List.Indicator>
+									<Text>Contains a number</Text>
+								</HStack>
+							</List.Item>
+							<List.Item>
+								<HStack>
+									<List.Indicator>
+										{/^[^a-z]*$/.test(value) ? (
+											<XCircle color="#F87171" weight="regular" size={24} />
+										) : (
+											<CheckCircle color="#73F871" weight="regular" size={24} />
+										)}
+									</List.Indicator>
+									<Text>Contains a lowercase letter</Text>
+								</HStack>
+							</List.Item>
+							<List.Item>
+								<HStack>
+									<List.Indicator>
+										{/^[^A-Z]*$/.test(value) ? (
+											<XCircle color="#F87171" weight="regular" size={24} />
+										) : (
+											<CheckCircle color="#73F871" weight="regular" size={24} />
+										)}
+									</List.Indicator>
+									<Text>Contains an uppercase letter</Text>
+								</HStack>
+							</List.Item>
+							<List.Item>
+								<HStack>
+									<List.Indicator>
+										{/^[a-zA-Z0-9]*$/.test(value) ? (
+											<XCircle color="#F87171" weight="regular" size={24} />
+										) : (
+											<CheckCircle color="#73F871" weight="regular" size={24} />
+										)}
+									</List.Indicator>
+									<Text>Contains a special character</Text>
+								</HStack>
+							</List.Item>
+						</List.Root>
+					</Collapsible.Content>
+				</Collapsible.Root>
 				<Button
 					type="submit"
 					w="full"
@@ -495,15 +703,13 @@ function RegistrationStep({ birthday, email, phoneNumber }) {
 					borderRadius="10px"
 					bg="#4080FF"
 					color="white"
+					fontWeight="semibold"
+					cursor="pointer"
+					disabled={!isValid}
+					_disabled={{ cursor: "not-allowed" }}
 				>
 					Sign Up
 				</Button>
-				<Text alignSelf="center" fontSize="xl">
-					Already have an account?{" "}
-					<Link asChild fontWeight="semibold">
-						<NextLink href="/login">Log in</NextLink>
-					</Link>
-				</Text>
 			</Stack>
 		</form>
 	);
@@ -511,9 +717,11 @@ function RegistrationStep({ birthday, email, phoneNumber }) {
 
 export default function SignUp() {
 	const [step, setStep] = useState(0);
-	const [birthday, setBirthday] = useState("");
+	const [name, setName] = useState("");
+	const [method, setMethod] = useState("Email");
 	const [email, setEmail] = useState("");
-	const [phoneNumber, setPhoneNumber] = useState("");
+	const [phone, setPhone] = useState("");
+	const [birthday, setBirthday] = useState("");
 
 	return (
 		<StepsRoot step={step} count={4}>
@@ -521,19 +729,36 @@ export default function SignUp() {
 				<Center w="60%" h="100%">
 					<Stack gap="8" maxW="md">
 						<StepsContent index={0}>
-							<BirthdayStep setStep={setStep} setBirthday={setBirthday} />
+							<JoinStep setStep={setStep} />
 						</StepsContent>
 						<StepsContent index={1}>
-							<EmailStep setStep={setStep} setEmail={setEmail} />
+							<InfoStep
+								method={method}
+								setStep={setStep}
+								setMethod={setMethod}
+								setName={setName}
+								setEmail={setEmail}
+								setPhone={setPhone}
+								setBirthday={setBirthday}
+							/>
 						</StepsContent>
 						<StepsContent index={2}>
-							<VerificationStep email={email} setStep={setStep} />
+							<VerificationStep
+								contact={email || phone}
+								method={method}
+								setStep={setStep}
+								setMethod={setMethod}
+								setEmail={setEmail}
+								setPhone={setPhone}
+							/>
 						</StepsContent>
 						<StepsContent index={3}>
 							<RegistrationStep
-								birthday={birthday}
+								name={name}
+								method={method}
 								email={email}
-								phoneNumber={phoneNumber}
+								phone={phone}
+								birthday={birthday}
 							/>
 						</StepsContent>
 					</Stack>

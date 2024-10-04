@@ -2,15 +2,15 @@ import mongoose, { Schema, model } from "mongoose";
 
 const UserSchema = new Schema(
 	{
-		fullName: {
+		name: {
 			type: String,
-			required: [true, "Full name is required"],
+			required: [true, "Name is required"],
 		},
 		email: {
 			type: String,
 			default: "",
 		},
-		phoneNumber: {
+		phone: {
 			type: String,
 			default: "",
 		},
@@ -30,6 +30,10 @@ const UserSchema = new Schema(
 		bio: {
 			type: String,
 			default: "",
+		},
+		verificationMethod: {
+			type: String,
+			required: [true, "Verification method is required"],
 		},
 		verified: { type: Boolean, default: true },
 		banned: { type: Boolean, default: false },
